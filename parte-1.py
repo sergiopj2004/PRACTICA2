@@ -17,6 +17,8 @@ def en_script_dir(path_arg: str) -> Path:
     Si viene con ruta, la respetamos tal cual.
     """
     p = Path(path_arg)
+    # si la ruta es solo el nombre del archivo, se asume el directorio del script
+    if str(p) == p.name:
     return (script_dir / p.name) if str(p) == p.name else p
 
 #Leemos el fichero de entrada y devuelve un tablero como lista de listas.
