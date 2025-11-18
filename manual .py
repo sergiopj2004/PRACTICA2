@@ -18,7 +18,7 @@ problem.addVariables("ab", [1,2,3])
 problem.addVariables(['a', 'b'], range(3))
 
 #4. Creación de las restricciones de nuestro problema
-''' Se crea una función lambda que recibe dos parámetros que se corresponden 
+''' Se crea una funcifón lambda que recibe dos parámetros que se corresponden 
 con los valores de las variables 'a' y 'b', y comprueba que 'a' es mayor que 'b''''
 problem.addConstraint(lambda a, b: a!=b, ('a','b'))
 ''' Forma alternativa'''
