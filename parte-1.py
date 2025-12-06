@@ -18,8 +18,26 @@ def en_script_dir(path_arg: str) -> Path:
     """
     p = Path(path_arg)
     # si la ruta es solo el nombre del archivo, se asume el directorio del script
-    if str(p) == p.name:
-    return (script_dir / p.name) if str(p) == p.name else p
+    if p.parent != Path('.'):
+        return p
+    return script_dir / p.name
+
+
+def en_script_dir(path_arg: str) -> Path:
+    """
+    Si el argumento no incluye directorio (solo nombre de fichero),
+    lo interpretamos relativo al directorio del script.
+    Si incluye directorio (relativo o absoluto), se respeta tal cual.
+    """
+    p = Path(path_arg)
+
+    # Caso 1: el usuario incluyó una ruta (absoluta o relativa)
+    if p.parent != Path('.'):
+        return p
+
+    # Caso 2: solo pasó un nombre de fichero
+    return script_dir / p.name
+    
 
 #Leemos el fichero de entrada y devuelve un tablero como lista de listas.
 def leer_entrada(path: Path):
