@@ -1,0 +1,47 @@
+#Cree que para este Jueves se podría tener la práctica terminada
+
+#Segunda parte: no entregar 1 fichero, cada funcionalidd en 1 fichero ; alumno.py no vale para nada y manual explica las cosas bien pero no es necedario y se podría omitir
+
+#PROBLEMA COLORES
+import constraint
+p = constraint.Problem()
+p.addVariable("v1", ['rojo', 'negro', 'azul'])
+p.addVariables(["v2", "v3", "v4"], ['rojo', 'negro', 'azul']) #Equivalente para no ir 1 por 1
+
+#Devuelve True si esos dos vertices tienen colores diferentes/Dos vértices adyacentes no pueden ser coloreados con el mismo color
+def diffColor(vi, vj):
+    return vi != vj
+
+print(diffColor('rojo', 'negro'))
+
+#Hará una llamada 9 veces de los cuales eliminará 3 tuplas porque no serán posibles
+#En el manual viene diferente pero está hecho de manera redundante, por eso no le gusta el manual
+p.addConstraint(diffColor, ["v1", "v2"])
+
+p.addConstraint(diffColor, ["v1", "v3"])
+
+p.addConstraint(diffColor, ["v3", "v4"])
+
+p.addConstraint(diffColor, ["v2", "v4"])
+
+soluciones = p.getSolutions()
+
+for  solucion in soluciones:
+    print(solucion)
+
+#Si ahora cambiamos el grafo y simplemente añadimos una línea entre V1 y V4 y otr v2 y v3, lo hacemosno planar
+p.addConstraint(diffColor, ["v4", "v1"])
+
+print("Segundo caso")
+soluciones = p.getSolutions()
+
+for  solucion in soluciones:
+    print(solucion)
+
+print("Último caso, no se imprime nada porque no hay sols, problema del palomar")
+p.addConstraint(diffColor, ["v2", "v3"])
+
+soluciones = p.getSolutions()
+
+for  solucion in soluciones:
+    print(solucion)

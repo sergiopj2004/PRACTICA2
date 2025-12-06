@@ -1,0 +1,32 @@
+#PROBLEMA SUMA LETRAS EN NÚMEROS
+import constraint
+p = constraint.Problem()
+p.addVariables("SENDMORY", range(10)) #range(10) = dominio del 0-9
+p.addVariables("abcd", range(2)) #para el acarreo = dominio 0 o 1, no te puedes llevar más
+
+def respondedPreguntas(a, b, c, post, pre=0):
+    "devolvemos True si y solo si a+b+pre=c+10*post"
+    return a+b+pre == c+10*post #pre --> acarreo anterior suma
+
+p.addConstraint(respondedPreguntas, "DEYd")
+p.addConstraint(respondedPreguntas, "NREcd")
+p.addConstraint(respondedPreguntas, "EONbc")
+p.addConstraint(respondedPreguntas, "SMOab")
+p.addConstraint(lambda x, y: x==y, "Ma") #Falta la función que verifique que la M y la a sean igual, para ello creamos una función lambda
+
+soluciones = p.getSolutions()
+
+for  solucion in soluciones:
+    print(solucion)
+
+p.addConstraint(constraint.AllDifferentConstraint(), "SENDMORY") #Fuerza que todas esas letras sean distintas
+print("Paso 2: ahora todas las letras son distintas")
+soluciones = p.getSolutions()
+
+for  solucion in soluciones:
+    print(solucion)
+
+#PROBLEMA REINAS: variables una para cada columna, de forma q hay q colocar una reina en cada columna
+# de forma q ninguna columna se quede vacía. Para cada reina su dominio es n para n reinas. 
+
+#si la diferencia por columnas es igual a la diferencia por filas en valor absoluto, estás en diagonal
