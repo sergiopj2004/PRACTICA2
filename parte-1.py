@@ -17,6 +17,8 @@ def en_script_dir(path_arg: str) -> Path:
     Si viene con ruta, la respetamos tal cual.
     """
     p = Path(path_arg)
+    # si la ruta es solo el nombre del archivo, se asume el directorio del script
+    if str(p) == p.name:
     return (script_dir / p.name) if str(p) == p.name else p
 
 #Leemos el fichero de entrada y devuelve un tablero como lista de listas.
@@ -74,12 +76,12 @@ def print_tabla(tablero, out):
     print(borde, file=out)
 
 
-# Construcción del CSP con python-constraint
 def construir_problema(tablero):
+    ''' Construcción del CSP con python-constraint '''
     n = len(tablero)
     problem = Problem()
 
-    # 1) Añadir variables con sus dominios
+    # 1) ----- VARIABLES Y DOMINIO -----
     for i in range(n):
         for j in range(n):
             c = tablero[i][j]
@@ -90,16 +92,16 @@ def construir_problema(tablero):
                 dominio = [c]
             problem.addVariable((i, j), dominio)
 
+    # ----- RESTRICCIONES -----
     # 2) Restricciones de equilibrio por filas:
+    limite = n//2
     #    En cada fila, debe haber n/2 celdas 'X' (y por tanto n/2 'O')
     for i in range(n):
         vars_fila = [(i, j) for j in range(n)]
 
         # Definimos una función que se aplicará a los valores de la fila
-        def fila_equilibrada(*vals, n=n):
-            # vals es una tupla con los valores de la fila
-            # Contamos X: debe haber exactamente n/2
-            return vals.count('X') == n // 2
+        def fila_equilibrada(*vals, target = limite):
+            return vals.count('X') == target
 
         problem.addConstraint(fila_equilibrada, vars_fila)
 
@@ -107,39 +109,26 @@ def construir_problema(tablero):
     for j in range(n):
         vars_col = [(i, j) for i in range(n)]
 
-        def col_equilibrada(*vals, n=n):
+        def col_equilibrada(*vals, target = limite):
             # Lo mismo que arriba, pero por columnas
-            return vals.count('X') == n // 2
+            return vals.count('X') == target
 
         problem.addConstraint(col_equilibrada, vars_col)
 
-    # 4) No tres iguales seguidos en filas:
-    #    Para cada fila i y cada trío (j, j+1, j+2),
-    #    no puede ser (X,X,X) ni (O,O,O).
+    # 4) Secuencia de colores en filas
     for i in range(n):
         for j in range(n - 2):
-            v1 = (i, j)
-            v2 = (i, j + 1)
-            v3 = (i, j + 2)
+            v1, v2, v3= (i, j), (i, j + 1), (i, j + 2)
 
             # La lambda recibe los tres valores a,b,c
             # y devuelve False si los tres son iguales.
-            problem.addConstraint(
-                lambda a, b, c: not (a == b == c),
-                (v1, v2, v3)
-            )
+            problem.addConstraint(lambda a, b, c: not (a == b == c),(v1, v2, v3))
 
-    # 5) No tres iguales seguidos en columnas (exactamente igual, pero vertical):
+    # 5) Secuencia de colores en columnas
     for i in range(n - 2):
         for j in range(n):
-            v1 = (i, j)
-            v2 = (i + 1, j)
-            v3 = (i + 2, j)
-
-            problem.addConstraint(
-                lambda a, b, c: not (a == b == c),
-                (v1, v2, v3)
-            )
+            v1, v2, v3 = (i, j), (i + 1, j), (i + 2, j)
+            problem.addConstraint(lambda a, b, c: not (a == b == c),(v1, v2, v3))
 
     return problem
 
