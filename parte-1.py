@@ -12,19 +12,6 @@ script_dir = Path(__file__).resolve().parent
 
 def en_script_dir(path_arg: str) -> Path:
     """
-    Si el argumento no tiene ruta (solo nombre de fichero),
-    lo interpretamos al directorio del script.
-    Si viene con ruta, la respetamos tal cual.
-    """
-    p = Path(path_arg)
-    # si la ruta es solo el nombre del archivo, se asume el directorio del script
-    if p.parent != Path('.'):
-        return p
-    return script_dir / p.name
-
-
-def en_script_dir(path_arg: str) -> Path:
-    """
     Si el argumento no incluye directorio (solo nombre de fichero),
     lo interpretamos relativo al directorio del script.
     Si incluye directorio (relativo o absoluto), se respeta tal cual.
