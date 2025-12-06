@@ -20,17 +20,14 @@ struct EstadoCompare {
 
 class ListaAbierta {
 private:
-    // Cola de prioridad interna (min-heap)
-    std::priority_queue<Estado, std::vector<Estado>, std::greater<Estado>> cola;
+    // Cola de prioridad interna (min-heap de f)
+    std::priority_queue<Estado, std::vector<Estado>, EstadoCompare> cola;
 public:
     ListaAbierta();
-
     // Inserta un estado en la lista abierta
     void insertar (int id, double f, double g);
-
     // Comprueba si la lista está vacía
     bool es_vacia() const;
-
     // Extrae el estado con menor f (el mejor candidato)
     Estado sacar_mejor();
 };

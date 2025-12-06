@@ -26,6 +26,8 @@ private:
                          const ClosedList& closed,
                          std::vector<int>& path);
 
-    // Heurística: distancia geodésica aproximada entre v y goal (metros)
+    // Heurística: distancia euclídea en el plano lon/lat (en grados)
+    // Es muy conservadora comparada con los costes reales en metros,
+    // por lo que es admisible.
     double heuristic(int v, int goal) const;
 };

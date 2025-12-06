@@ -35,7 +35,8 @@ int main(int argc, char* argv[]) {
     long long expansions = 0;
 
     auto t0 = std::chrono::steady_clock::now();
-    bool ok = solver.dijkstra(start, goal, path, totalCost, expansions);
+    bool ok = solver.mejor_primero(start, goal, path, totalCost, expansions);
+
     auto t1 = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> diff = t1 - t0;
