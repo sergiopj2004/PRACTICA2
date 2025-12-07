@@ -6,10 +6,10 @@
 #include <iostream>
 #include <limits>
 
-Graph::Graph()
-    : nVertices(0), nEdges(0) {}
+Grafo::Grafo()
+    : nVertices(0), nAristas(0) {}
 
-bool Graph::load(const std::string& basePath) {
+bool Grafo::load(const std::string& basePath) {
     std::string grPath = basePath + ".gr";
     std::string coPath = basePath + ".co";
 
@@ -24,7 +24,7 @@ bool Graph::load(const std::string& basePath) {
     return true;
 }
 
-bool Graph::loadGraphFile(const std::string& grPath) {
+bool Grafo::loadGraphFile(const std::string& grPath) {
     std::ifstream in(grPath);
     if (!in) {
         std::cerr << "No se pudo abrir " << grPath << "\n";
@@ -33,7 +33,7 @@ bool Graph::loadGraphFile(const std::string& grPath) {
 
     std::string line;
     nVertices = 0;
-    nEdges = 0;
+    nAristas = 0;
 
     while (std::getline(in, line)) {
         if (line.empty()) continue;
@@ -47,16 +47,16 @@ bool Graph::loadGraphFile(const std::string& grPath) {
             int n, m;
             iss >> p >> sp >> n >> m;
             nVertices = n;
-            nEdges = 0; // contaremos 'a'
-            adj.assign(nVertices + 1, std::vector<Edge>());
+            nAristas = 0; // contaremos 'a'
+            adj.assign(nVertices + 1, std::vector<Arista>());
         } else if (line[0] == 'a') {
             std::istringstream iss(line);
             char a;
-            int u, v, cost;
-            iss >> a >> u >> v >> cost;
+            int u, v, coste;
+            iss >> a >> u >> v >> coste;
             if (u >= 1 && u <= nVertices) {
-                adj[u].push_back(Edge{v, cost});
-                ++nEdges; // arco dirigido
+                adj[u].push_back(Arista{v, coste});
+                ++nAristas; // arco dirigido
             }
         }
     }
@@ -69,7 +69,7 @@ bool Graph::loadGraphFile(const std::string& grPath) {
     return true;
 }
 
-bool Graph::loadCoordFile(const std::string& coPath) {
+bool Grafo::loadCoordFile(const std::string& coPath) {
     std::ifstream in(coPath);
     if (!in) {
         std::cerr << "No se pudo abrir " << coPath << "\n";
@@ -82,7 +82,7 @@ bool Graph::loadCoordFile(const std::string& coPath) {
         return false;
     }
 
-    coords.assign(nVertices + 1, Coord{0.0, 0.0});
+    coords.assign(nVertices + 1, Coordenada{0.0, 0.0});
 
     std::string line;
     while (std::getline(in, line)) {
@@ -97,12 +97,12 @@ bool Graph::loadCoordFile(const std::string& coPath) {
             std::istringstream iss(line);
             char vchar;
             int id;
-            long long lon_i, lat_i;
-            iss >> vchar >> id >> lon_i >> lat_i;
+            long long longitud_i, latitud_i;
+            iss >> vchar >> id >> longitud_i >> latitud_i;
             if (id >= 1 && id <= nVertices) {
-                Coord c;
-                c.lon = static_cast<double>(lon_i) / 1e6; // están multiplicados por 10^6
-                c.lat = static_cast<double>(lat_i) / 1e6;
+                Coordenada c;
+                c.longitud = static_cast<double>(longitud_i) / 1e6; // están multiplicados por 10^6
+                c.latitud = static_cast<double>(latitud_i) / 1e6;
                 coords[id] = c;
             }
         }
@@ -111,10 +111,10 @@ bool Graph::loadCoordFile(const std::string& coPath) {
     return true;
 }
 
-int Graph::getEdgeCost(int u, int v) const {
+int Grafo::costeArista(int u, int v) const {
     if (u < 1 || u > nVertices) return -1;
     for (const auto& e : adj[u]) {
-        if (e.to == v) return e.cost;
+        if (e.destino == v) return e.coste;
     }
     return -1;
 }

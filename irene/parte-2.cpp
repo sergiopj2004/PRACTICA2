@@ -10,30 +10,34 @@
 #include "algoritmo.h"
 
 int main(int argc, char* argv[]) {
+    // Comprobación de argumentos
     if (argc != 5) {
         std::cerr << "Uso: " << argv[0]
                   << " <vertice-1> <vertice-2> <nombre-del-mapa> <fichero-salida>\n";
         return 1;
     }
 
+    // Lectura de parámetros
     int start = std::stoi(argv[1]);
     int goal  = std::stoi(argv[2]);
     std::string mapBase = argv[3];
     std::string outFile = argv[4];
 
-    Graph graph;
+    // Cargar grafo y coordenadas
+    Grafo graph;
     if (!graph.load(mapBase)) {
         return 1;
     }
 
     std::cout << "# vertices: " << graph.numVertices() << "\n";
-    std::cout << "# arcos : " << graph.numEdges() << "\n";
+    std::cout << "# arcos : " << graph.numAristas() << "\n";
 
     ShortestPathSolver solver(graph);
     std::vector<int> path;
     long long totalCost = 0;
     long long expansions = 0;
 
+    // Cálculo del tiempo de ejecución
     auto t0 = std::chrono::steady_clock::now();
     bool ok = solver.mejor_primero(start, goal, path, totalCost, expansions);
 
@@ -48,6 +52,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
+    // Cálculo de expansiones por segundo y el coste total del algoritmo
     std::cout << "Solución óptima encontrada con coste " << totalCost << "\n";
     std::cout << "Tiempo de ejecución: " << std::fixed << std::setprecision(2)
               << seconds << " segundos\n";
@@ -70,8 +75,8 @@ int main(int argc, char* argv[]) {
         for (std::size_t i = 0; i + 1 < path.size(); ++i) {
             int u = path[i];
             int v = path[i + 1];
-            int cost = graph.getEdgeCost(u, v);
-            out << " - (" << cost << ") - " << v;
+            int coste = graph.costeArista(u, v);
+            out << " - (" << coste << ") - " << v;
         }
         out << "\n";
     }
