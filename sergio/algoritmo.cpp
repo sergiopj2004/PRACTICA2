@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <iostream>
 
 // Conversión de grados de latitud a metros
 // 1 grado de latitud son aproximadamente 111132 metros
@@ -20,6 +21,7 @@ SolverCaminoMinimo::SolverCaminoMinimo(const Grafo& g) : grafo(g) {}
 
 // Heurística: Aproximación Euclídea Plana con factores fijos
 double SolverCaminoMinimo::heuristica(int u, int objetivo) const {
+    return 0.0;
     Coordenada c1 = grafo.coordenada(u);
     Coordenada c2 = grafo.coordenada(objetivo);
 
