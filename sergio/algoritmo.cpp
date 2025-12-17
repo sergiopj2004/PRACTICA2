@@ -4,13 +4,16 @@
 #include <algorithm>
 #include <limits>
 
-// 1 grado de latitud son aprox 111.1 km
+// Conversión de grados de latitud a metros
+// 1 grado de latitud son aproximadamente 111132 metros
 #define METROS_POR_GRADO_LAT 111132.0
 
-// Para la longitud depende de la latitud. 
-// En EEUU (lat ~38) el factor es aprox 0.78. 
-// 111132 * 0.78 = 86682 metros aprox por grado de longitud.
-// Escogemos un valor un poco menor para asegurar que sea admisible (no pasarnos).
+// La longitud depende de la latitud
+/*En el mapa de Estados Unidos la latitud es aproximadamente 38 (su coseno es aprox 0.78)
+Los metros por grado de longitud consiste en multiplicar la latitud por este factor
+111132 * 0.78 = 86682 metros aprox por grado de longitud.
+Escogemos un valor un poco menor para asegurar que sea admisible .
+*/
 #define METROS_POR_GRADO_LON 85000.0
 
 SolverCaminoMinimo::SolverCaminoMinimo(const Grafo& g) : grafo(g) {}
