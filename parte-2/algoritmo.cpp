@@ -7,27 +7,33 @@
 // Constante radio de la tierra en metros (aproximado)
 #define RADIO_TIERRA  6371000
 
-static inline double deg2rad(double deg) {
+// Conversión de grados a radianes 
+static inline double grados_a_radianes(double deg) {
     return deg * M_PI / 180.0;
 }
 
-static inline double haversine_m(double lat1_deg, double lon1_deg,
-                                 double lat2_deg, double lon2_deg) {
-    const double lat1 = deg2rad(lat1_deg);
-    const double lon1 = deg2rad(lon1_deg);
-    const double lat2 = deg2rad(lat2_deg);
-    const double lon2 = deg2rad(lon2_deg);
-
+// Cálculo de la fórmula Haversine
+static inline double haversine(double lat1_grad, double lon1_grad,
+                                 double lat2_grad, double lon2_grad) {
+    // Conversión de coordenadas (latitud y longitud) a radianes
+    const double lat1 = grados_a_radianes(lat1_grad);
+    const double lon1 = grados_a_radianes(lon1_grad);
+    const double lat2 = grados_a_radianes(lat2_grad);
+    const double lon2 = grados_a_radianes(lon2_grad);
+    
+    // diferencia entre latitud y longitud de ambos puntos
     const double dlat = lat2 - lat1;
     const double dlon = lon2 - lon1;
-
+    
+    // Cálculo de la fórmula
     const double s1 = std::sin(dlat * 0.5);
     const double s2 = std::sin(dlon * 0.5);
 
     const double a =
         s1 * s1 +
         std::cos(lat1) * std::cos(lat2) * (s2 * s2);
-
+    
+    // Cálculo de la distancia angular y distancia final
     const double c = 2.0 * std::asin(std::min(1.0, std::sqrt(a)));
 
     return RADIO_TIERRA * c;
@@ -41,7 +47,7 @@ double SolverCaminoMinimo::heuristica(int u, int objetivo) const {
     const Coordenada c2 = grafo.coordenada(objetivo);
 
     // latitud y longitud en grados (ya escaladas desde el .co)
-    return haversine_m(
+    return haversine(
         c1.latitud, c1.longitud,
         c2.latitud, c2.longitud
     );
