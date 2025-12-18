@@ -24,6 +24,6 @@ private:
                            const ListaCerrada& cerrada,
                            std::vector<int>& camino);
     
-    // Heurística: distancia euclídea en lon/lat
+    // Heurística: distancia haversine 
     double heuristica(int v, int objetivo) const;
 };

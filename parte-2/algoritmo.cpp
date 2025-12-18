@@ -3,35 +3,48 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
-#include <iostream>
 
-// Conversión de grados de latitud a metros
-// 1 grado de latitud son aproximadamente 111132 metros
-#define METROS_POR_GRADO_LAT 111132.0
+// Constante radio de la tierra en metros (aproximado)
+#define RADIO_TIERRA  6371000
 
-// La longitud depende de la latitud
-/*En el mapa de Estados Unidos la latitud es aproximadamente 38 (su coseno es aprox 0.78)
-Los metros por grado de longitud consiste en multiplicar la latitud por este factor
-111132 * 0.78 = 86682 metros aprox por grado de longitud.
-Escogemos un valor un poco menor para asegurar que sea admisible .
-*/
-#define METROS_POR_GRADO_LON 85000.0
+static inline double deg2rad(double deg) {
+    return deg * M_PI / 180.0;
+}
+
+static inline double haversine_m(double lat1_deg, double lon1_deg,
+                                 double lat2_deg, double lon2_deg) {
+    const double lat1 = deg2rad(lat1_deg);
+    const double lon1 = deg2rad(lon1_deg);
+    const double lat2 = deg2rad(lat2_deg);
+    const double lon2 = deg2rad(lon2_deg);
+
+    const double dlat = lat2 - lat1;
+    const double dlon = lon2 - lon1;
+
+    const double s1 = std::sin(dlat * 0.5);
+    const double s2 = std::sin(dlon * 0.5);
+
+    const double a =
+        s1 * s1 +
+        std::cos(lat1) * std::cos(lat2) * (s2 * s2);
+
+    const double c = 2.0 * std::asin(std::min(1.0, std::sqrt(a)));
+
+    return RADIO_TIERRA * c;
+}
 
 SolverCaminoMinimo::SolverCaminoMinimo(const Grafo& g) : grafo(g) {}
 
-// Heurística: Aproximación Euclídea Plana con factores fijos
+// Heurística: Aproximación con Haversine
 double SolverCaminoMinimo::heuristica(int u, int objetivo) const {
-    Coordenada c1 = grafo.coordenada(u);
-    Coordenada c2 = grafo.coordenada(objetivo);
+    const Coordenada c1 = grafo.coordenada(u);
+    const Coordenada c2 = grafo.coordenada(objetivo);
 
-    double dLat = std::fabs(c1.latitud - c2.latitud);
-    double dLon = std::fabs(c1.longitud - c2.longitud);
-
-    // Convertimos diferencia de grados a metros
-    double dy = dLat * METROS_POR_GRADO_LAT;
-    double dx = dLon * METROS_POR_GRADO_LON;
-
-    return std::sqrt(dx*dx + dy*dy);
+    // latitud y longitud en grados (ya escaladas desde el .co)
+    return haversine_m(
+        c1.latitud, c1.longitud,
+        c2.latitud, c2.longitud
+    );
 }
 
 // A* (f = g + h)
